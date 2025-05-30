@@ -1,30 +1,63 @@
 # myRPC: Remote Procedure Call System
 **Система удалённого выполнения команд через сокеты с авторизацией пользователей**
 
-## Назначение
-Система позволяет:
-- Выполнять Bash-команды на удалённом сервере;
-- Контролировать доступ через конфигурационные файлы;
-- Логировать операции через `libmysyslog`;
-- Поддерживает текстовый и JSON-форматы сообщений.
+## Описание
+Система myRPC состоит из двух основных компонентов:
+- `myRPC-client` — консольное приложение для отправки команд
+- `myRPC-server` — серверное приложение для выполнения команд
 
-## Установка
-### Из deb-пакетов:
-#### На сервере
-```bash
-sudo apt install ./deb/myrpc-server.deb
-```
-#### На клиенте
-```bash
-sudo apt install ./deb/myrpc-client.deb
-```
+**Ключевые возможности:**
+- Поддержка потоковых (TCP) и датаграммных (UDP) соединений
+- Авторизация пользователей через конфигурационный файл
+- Логирование операций через `libmysyslog`
+- Поддержка текстового и JSON-форматов сообщений
 
-## Запуск сервера:
+## Сборка проекта
+### Общая сборка
 ```bash
-myrpc-server -c /etc/myRPC/myRPC.conf
-```
-## Пример вызова команды с клиента:
-```bash
-myrpc-client -h 192.168.1.10 -p 1234 -s -c "ls -la"
+make all      # Сборка всех компонентов
+make clean    # Очистка артефактов
+make deb      # дДля генерация deb-пакетов
 ```
 
+## Сборка клиента
+```bash
+cd myrpc-client
+make          # Компиляция
+make deb      # Создание deb-пакета
+make clean    # Очистка
+```
+## Сборка сервера
+```bash
+cd myrpc-server
+make          # Компиляция
+make deb      # Создание deb-пакета
+make clean    # Очистка
+```
+
+## Установка и настройка
+### Установка из deb-пакетов
+```bash
+sudo dpkg -i deb/myrpc-client_1.0-1_amd64.deb
+sudo dpkg -i deb/myrpc-server_1.0-1_amd64.deb
+sudo dpkg -i deb/libmysyslog_1.0-1_amd64.deb
+```
+### Настройка сервера
+```bash
+sudo mkdir -p /etc/myRPC
+echo -e "port=5555\nsocket_type=stream" | sudo tee /etc/myRPC/myRPC.conf
+```
+```bash
+echo "your_username" | sudo tee /etc/myRPC/users.conf
+```
+
+## Использование
+### Запуск сервера
+```bash
+sudo myrpc-server -c /etc/myRPC/myRPC.conf
+```
+### Примеры работы с клиентом
+```bash
+myrpc-client -h 127.0.0.1 -p 8080 -s -c "ls -la"
+myrpc-client -h 127.0.0.1 -p 8080 -d -c "date"
+```
