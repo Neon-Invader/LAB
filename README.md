@@ -10,13 +10,12 @@
 
 ## Установка
 ### Из deb-пакетов:
+#### На сервере
 ```bash
-# На сервере
 sudo apt install ./deb/myrpc-server.deb
 ```
-
+#### На клиенте
 ```bash
-# На клиенте
 sudo apt install ./deb/myrpc-client.deb
 ```
 
